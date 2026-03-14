@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { dokumen as initialDokumen } from "../data/mockData";
 import { useAuth } from "../context/AuthContext";
 import { Plus, Search, Filter, Archive, Download, Eye, X, FileText, FolderOpen } from "lucide-react";
+import { supabase } from "../lib/supabaseClient";
 
 type Dokumen = typeof initialDokumen[0];
 
@@ -43,6 +44,10 @@ export default function ArsipDokumen() {
     kategori: "",
     tanggal: new Date().toISOString().split("T")[0],
   });
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const filtered = data.filter(d => {
     const matchSearch =
@@ -52,21 +57,53 @@ export default function ArsipDokumen() {
     return matchSearch && matchKategori;
   });
 
-  const handleCreate = () => {
-    if (!form.nama_dokumen || !form.kategori) return;
-    const newId = `DOK${String(data.length + 1).padStart(3, "0")}`;
-    const ext = "pdf";
+  const handleCreate = async () => {
+    setError(null);
+    if (!form.nama_dokumen || !form.kategori || !file) {
+      setError("Lengkapi nama, kategori, dan pilih file terlebih dahulu.");
+      return;
+    }
+
+    setUploading(true);
+    if (!supabase) {
+      setError("Supabase belum dikonfigurasi dengan benar.");
+      setUploading(false);
+      return;
+    }
+
+    try {
+      const ext = file.name.split(".").pop() || "pdf";
+      const safeName = form.nama_dokumen.toLowerCase().replace(/\s/g, "_");
+      const path = `dokumen/${Date.now()}_${safeName}.${ext}`;
+
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("dokumen")
+        .upload(path, file, { upsert: false });
+
+      if (uploadError || !uploadData) {
+        throw uploadError || new Error("Gagal mengunggah file.");
+      }
+
+      const { data: publicData } = supabase.storage.from("dokumen").getPublicUrl(uploadData.path);
+
+      const newId = `DOK${String(data.length + 1).padStart(3, "0")}`;
     const newDoc: Dokumen = {
       dokumen_id: newId,
       nama_dokumen: form.nama_dokumen,
       kategori: form.kategori,
-      file: `${form.nama_dokumen.toLowerCase().replace(/\s/g, "_")}.${ext}`,
+        file: publicData?.publicUrl || uploadData.path,
       tanggal: form.tanggal,
       uploader: user?.nama || "Admin",
     };
     setData(prev => [newDoc, ...prev]);
     setShowModal(false);
-    setForm({ nama_dokumen: "", kategori: "", tanggal: new Date().toISOString().split("T")[0] });
+      setForm({ nama_dokumen: "", kategori: "", tanggal: new Date().toISOString().split("T")[0] });
+      setFile(null);
+    } catch (e: any) {
+      setError(e?.message || "Terjadi kesalahan saat upload file.");
+    } finally {
+      setUploading(false);
+    }
   };
 
   const kategoriCounts = kategoriOptions.reduce((acc, k) => {
@@ -163,8 +200,14 @@ export default function ArsipDokumen() {
                     <Eye className="w-4 h-4" />
                   </button>
                   <button
-                    onClick={e => e.stopPropagation()}
+                    onClick={e => {
+                      e.stopPropagation();
+                      if (doc.file.startsWith("http")) {
+                        window.open(doc.file, "_blank");
+                      }
+                    }}
                     className="p-1.5 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-all"
+                    disabled={!doc.file.startsWith("http")}
                   >
                     <Download className="w-4 h-4" />
                   </button>
@@ -213,19 +256,40 @@ export default function ArsipDokumen() {
               </div>
               <div>
                 <label className="block text-sm text-gray-700 mb-1.5">File Dokumen</label>
-                <div className="border-2 border-dashed border-gray-200 rounded-xl p-8 text-center text-gray-400 hover:border-indigo-300 transition-colors cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="w-full border-2 border-dashed border-gray-200 rounded-xl p-8 text-center text-gray-400 hover:border-indigo-300 transition-colors cursor-pointer bg-gray-50"
+                >
                   <FileText className="w-10 h-10 mx-auto mb-3 opacity-40" />
-                  <p className="text-sm">Klik untuk upload atau drag & drop</p>
+                  <p className="text-sm">
+                    {file ? `File dipilih: ${file.name}` : "Klik untuk memilih file"}
+                  </p>
                   <p className="text-xs mt-1">PDF, DOC, XLS (Max 20MB)</p>
-                </div>
+                </button>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  className="hidden"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx"
+                  onChange={e => {
+                    const f = e.target.files?.[0] || null;
+                    setFile(f);
+                  }}
+                />
               </div>
             </div>
+            {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
             <div className="flex gap-3 mt-6">
               <button onClick={() => setShowModal(false)} className="flex-1 border border-gray-200 text-gray-600 rounded-xl py-2.5 text-sm hover:bg-gray-50">
                 Batal
               </button>
-              <button onClick={handleCreate} className="flex-1 bg-indigo-600 text-white rounded-xl py-2.5 text-sm hover:bg-indigo-700">
-                Upload
+              <button
+                onClick={handleCreate}
+                disabled={uploading}
+                className="flex-1 bg-indigo-600 text-white rounded-xl py-2.5 text-sm hover:bg-indigo-700 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {uploading ? "Mengupload..." : "Upload"}
               </button>
             </div>
           </div>
@@ -265,7 +329,15 @@ export default function ArsipDokumen() {
               ))}
             </div>
             <div className="flex gap-3 mt-6">
-              <button className="flex-1 bg-indigo-600 text-white rounded-xl py-2.5 text-sm hover:bg-indigo-700 flex items-center justify-center gap-2">
+              <button
+                onClick={() => {
+                  if (showDetail.file.startsWith("http")) {
+                    window.open(showDetail.file, "_blank");
+                  }
+                }}
+                disabled={!showDetail.file.startsWith("http")}
+                className="flex-1 bg-indigo-600 text-white rounded-xl py-2.5 text-sm hover:bg-indigo-700 flex items-center justify-center gap-2 disabled:opacity-60 disabled:cursor-not-allowed"
+              >
                 <Download className="w-4 h-4" />
                 Unduh
               </button>
