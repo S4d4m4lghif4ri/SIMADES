@@ -5,13 +5,23 @@ import { Mail, MailOpen, CheckCircle, Clock, Wallet, Calendar, TrendingUp, Trend
 
 const formatRupiah = (v: number) => new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", notation: "compact", maximumFractionDigits: 1 }).format(v);
 
+const formatDate = () => {
+  return new Date().toLocaleDateString("id-ID", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+};
+
 export default function Dashboard() {
   const { user } = useAuth();
 
+  const today = new Date().toISOString().split("T")[0];
   const pendingSurat = suratKeluar.filter(s => s.status === "pending").length;
   const approvedSurat = suratKeluar.filter(s => s.status === "approved").length;
   const activeTasks = tugas.filter(t => t.status === "proses").length;
-  const todayActivities = kegiatan.filter(k => k.tanggal === "2026-03-13").length;
+  const todayActivities = kegiatan.filter(k => k.tanggal === today).length;
   const totalMasuk = keuangan.filter(k => k.jenis === "masuk").reduce((a, b) => a + b.jumlah, 0);
   const totalKeluar = keuangan.filter(k => k.jenis === "keluar").reduce((a, b) => a + b.jumlah, 0);
   const saldo = totalMasuk - totalKeluar;
@@ -54,7 +64,7 @@ export default function Dashboard() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div>
           <h1 className="text-gray-900">Selamat Datang, {user?.nama?.split(" ")[0]}!</h1>
-          <p className="text-gray-500 text-sm mt-0.5">Sabtu, 14 Maret 2026 • Desa Cibiru Hilir</p>
+          <p className="text-gray-500 text-sm mt-0.5">{formatDate()} • Desa Cibiru Hilir</p>
         </div>
         <div className="flex items-center gap-2 bg-emerald-50 border border-emerald-100 rounded-xl px-4 py-2">
           <Wallet className="w-4 h-4 text-emerald-600" />

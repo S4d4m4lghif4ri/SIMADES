@@ -8,16 +8,16 @@ import {
 } from "lucide-react";
 
 const navItems = [
-  { to: "/dashboard", icon: LayoutDashboard, label: "Dashboard", module: "dashboard" },
-  { to: "/surat-keluar", icon: Mail, label: "Surat Keluar", module: "surat-keluar" },
-  { to: "/surat-masuk", icon: MailOpen, label: "Surat Masuk", module: "surat-masuk" },
-  { to: "/disposisi", icon: GitBranch, label: "Disposisi", module: "disposisi" },
-  { to: "/tugas", icon: ClipboardList, label: "Manajemen Tugas", module: "tugas" },
-  { to: "/kegiatan", icon: Calendar, label: "Kegiatan Desa", module: "kegiatan" },
-  { to: "/keuangan", icon: Wallet, label: "Keuangan Desa", module: "keuangan" },
-  { to: "/arsip", icon: Archive, label: "Arsip Dokumen", module: "arsip" },
-  { to: "/laporan", icon: BarChart3, label: "Laporan", module: "laporan" },
-  { to: "/pengaturan", icon: Settings, label: "Pengaturan", module: "pengaturan" },
+  { to: "/app/dashboard", icon: LayoutDashboard, label: "Dashboard", module: "dashboard" },
+  { to: "/app/surat-keluar", icon: Mail, label: "Surat Keluar", module: "surat-keluar" },
+  { to: "/app/surat-masuk", icon: MailOpen, label: "Surat Masuk", module: "surat-masuk" },
+  { to: "/app/disposisi", icon: GitBranch, label: "Disposisi", module: "disposisi" },
+  { to: "/app/tugas", icon: ClipboardList, label: "Manajemen Tugas", module: "tugas" },
+  { to: "/app/kegiatan", icon: Calendar, label: "Kegiatan Desa", module: "kegiatan" },
+  { to: "/app/keuangan", icon: Wallet, label: "Keuangan Desa", module: "keuangan" },
+  { to: "/app/arsip", icon: Archive, label: "Arsip Dokumen", module: "arsip" },
+  { to: "/app/laporan", icon: BarChart3, label: "Laporan", module: "laporan" },
+  { to: "/app/pengaturan", icon: Settings, label: "Pengaturan", module: "pengaturan" },
 ];
 
 const roleColors: Record<string, string> = {

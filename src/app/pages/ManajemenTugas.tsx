@@ -71,7 +71,7 @@ export default function ManajemenTugas() {
     }
   };
 
-  const isOverdue = (deadline: string) => new Date(deadline) < new Date("2026-03-13");
+  const isOverdue = (deadline: string) => new Date(deadline) < new Date(new Date().toDateString());
 
   const counts = {
     all: data.length,

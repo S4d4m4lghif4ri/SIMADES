@@ -99,7 +99,7 @@ export default function KeuanganDesa() {
             <Wallet className="w-5 h-5 text-emerald-200" />
           </div>
           <p className="text-2xl">{formatRupiahCompact(saldo)}</p>
-          <p className="text-emerald-200 text-xs mt-1">Per 13 Maret 2026</p>
+          <p className="text-emerald-200 text-xs mt-1">Per {new Date().toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" })}</p>
         </div>
         <div className="bg-white border border-emerald-100 rounded-xl p-5 shadow-sm">
           <div className="flex items-center justify-between mb-3">

@@ -20,7 +20,7 @@ export default function Login() {
     const ok = login(email, password);
     setLoading(false);
     if (ok) {
-      navigate("/dashboard");
+      navigate("/app/dashboard");
     } else {
       setError("Email atau password salah. Silakan coba lagi.");
     }

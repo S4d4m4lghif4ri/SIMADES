@@ -18,7 +18,7 @@ const reportTypes = [
 export default function Laporan() {
   const [activeReport, setActiveReport] = useState<ReportType>("surat-keluar");
   const [filterFrom, setFilterFrom] = useState("2026-01-01");
-  const [filterTo, setFilterTo] = useState("2026-03-13");
+  const [filterTo, setFilterTo] = useState(new Date().toISOString().split("T")[0]);
   const [exporting, setExporting] = useState(false);
 
   const handleExport = (format: "PDF" | "Excel") => {
