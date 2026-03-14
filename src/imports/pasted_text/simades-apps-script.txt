@@ -1,0 +1,370 @@
+You are a senior software engineer specializing in Google Apps Script, web applications, and database system design.
+
+Create a complete responsive web application called **SIMADES (Sistem Manajemen Administrasi Desa)**.
+
+This system is used by a village government office to manage administration, document workflows, task management, village activities, and financial records.
+
+The application must run as a **Google Apps Script Web App** with **Google Spreadsheet as the database** and **Google Drive as file storage**.
+
+The UI must be modern, simple, and mobile friendly.
+
+TECH STACK
+
+Frontend:
+HTML
+CSS
+TailwindCSS
+Vanilla JavaScript
+
+Backend:
+Google Apps Script
+
+Database:
+Google Sheets
+
+File Storage:
+Google Drive
+
+GENERAL SYSTEM REQUIREMENTS
+
+1. The system must support role-based login.
+2. The UI must use a sidebar dashboard layout.
+3. The application must load fast and avoid excessive API calls.
+4. Use asynchronous communication with google.script.run.
+5. Use modular Apps Script functions for each module.
+6. All files uploaded must be saved to Google Drive and linked in the spreadsheet.
+7. Each record must have a unique ID.
+
+USER ROLES
+
+The system must support these roles:
+
+Admin Desa
+Kepala Desa
+Sekretaris Desa
+Kaur
+Kasi
+Bendahara
+
+Each role must have different access permissions.
+
+DATABASE STRUCTURE
+
+Create a Google Spreadsheet database with these sheets:
+
+Users
+SuratKeluar
+SuratMasuk
+Disposisi
+Tugas
+ProgressTugas
+Kegiatan
+Keuangan
+Dokumen
+Logs
+
+USERS TABLE
+
+Columns:
+
+user_id
+nama
+jabatan
+role
+email
+password
+status
+
+Roles available:
+
+KEPALA_DESA
+SEKDES
+KAUR
+KASI
+BENDAHARA
+ADMIN
+
+SURAT KELUAR MODULE
+
+Create a module to manage outgoing village letters.
+
+Features:
+
+Create new letter
+Upload draft letter
+View letter list
+Approve letter
+Electronic signature
+Archive approved letters
+
+Fields:
+
+surat_id
+nomor_surat
+jenis_surat
+tanggal
+pembuat
+file_draft
+status
+ttd_kades
+tanggal_approve
+
+Workflow:
+
+Admin uploads draft
+Status = pending
+Village head reviews
+Village head approves
+Electronic signature added
+Letter archived
+
+SURAT MASUK MODULE
+
+Create a module for incoming letters.
+
+Features:
+
+Input incoming letter
+Upload document
+View list
+Archive letters
+
+Fields:
+
+surat_masuk_id
+nomor_surat
+asal_surat
+tanggal_surat
+perihal
+file_surat
+status
+
+DISPOSISI MODULE
+
+Village head must be able to assign instructions for incoming letters.
+
+Fields:
+
+disposisi_id
+surat_masuk_id
+dari
+kepada
+instruksi
+tanggal
+status
+
+Workflow:
+
+Kaur Umum uploads incoming letter
+Village head reviews
+Village head assigns disposition
+Assigned staff receives task
+
+TASK MANAGEMENT MODULE
+
+Create a task assignment system.
+
+Sekretaris Desa can assign tasks to KAUR.
+
+Village Head can assign tasks to KASI.
+
+Fields:
+
+tugas_id
+nama_tugas
+deskripsi
+pemberi_tugas
+penerima_tugas
+tanggal_mulai
+deadline
+file_referensi
+status
+
+Statuses:
+
+belum_mulai
+proses
+selesai
+
+TASK PROGRESS MODULE
+
+Track progress of tasks.
+
+Fields:
+
+progress_id
+tugas_id
+tanggal
+progress
+file_hasil
+status
+
+VILLAGE ACTIVITIES MODULE
+
+Create a module to log daily village activities.
+
+Fields:
+
+kegiatan_id
+nama_kegiatan
+tanggal
+waktu
+pelaksana
+peserta
+dokumentasi
+catatan
+
+FINANCE MODULE
+
+Accessible only to Bendahara and Kepala Desa.
+
+Features:
+
+Record income
+Record expenses
+Upload receipts
+Financial dashboard
+
+Fields:
+
+transaksi_id
+tanggal
+jenis
+sumber_dana
+jumlah
+keterangan
+bukti
+
+DOCUMENT ARCHIVE MODULE
+
+All files must automatically be stored and accessible.
+
+Fields:
+
+dokumen_id
+nama_dokumen
+kategori
+file
+tanggal
+uploader
+
+SYSTEM LOGS
+
+Record user actions.
+
+Fields:
+
+log_id
+user_id
+aktivitas
+modul
+waktu
+
+USER INTERFACE DESIGN
+
+The UI must have a professional dashboard layout.
+
+Layout structure:
+
+Top Navbar
+Sidebar Navigation
+Main Content Area
+
+SIDEBAR MENU
+
+Dashboard
+Surat Keluar
+Surat Masuk
+Disposisi
+Manajemen Tugas
+Kegiatan Desa
+Keuangan Desa
+Arsip Dokumen
+Laporan
+Pengaturan
+
+DASHBOARD PAGE
+
+Display summary cards:
+
+Total pending letters
+Total approved letters
+Active tasks
+Today's activities
+Village cash balance
+
+Display charts:
+
+Monthly letter statistics
+Task completion statistics
+Financial income vs expense
+
+REPORT MODULE
+
+Users must be able to export reports.
+
+Reports available:
+
+Outgoing letters
+Incoming letters
+Task reports
+Village activities
+Financial transactions
+
+Export formats:
+
+PDF
+Excel
+
+PERFORMANCE OPTIMIZATION
+
+The system must be optimized for Google Apps Script limitations.
+
+Use batch reads with getValues()
+Avoid per-row reads
+Use caching where possible
+Limit sheet queries
+
+SECURITY REQUIREMENTS
+
+Validate user sessions.
+
+Restrict access based on role.
+
+Ensure financial module only accessible by Bendahara and Kepala Desa.
+
+FILE STORAGE
+
+Create folders automatically in Google Drive:
+
+SIMADES
+SuratKeluar
+SuratMasuk
+DokumenTugas
+DokumentasiKegiatan
+BuktiKeuangan
+Arsip
+
+UI STYLE
+
+Use TailwindCSS.
+
+Design must look like a modern SaaS dashboard.
+
+Responsive for desktop and mobile.
+
+DELIVERABLES
+
+Generate:
+
+Complete Apps Script backend code
+HTML templates
+CSS styles
+JavaScript modules
+Database integration
+File upload system
+Role based authentication
+Dashboard charts
+Navigation layout
+
+The final output must be a deployable Google Apps Script Web App.
